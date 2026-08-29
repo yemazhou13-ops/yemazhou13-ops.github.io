@@ -70,7 +70,7 @@ button { background: none; border: none; cursor: pointer; color: inherit; font: 
   z-index: 0;
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  padding: 0 clamp(20px, 4vw, 64px);
+  padding: 0 clamp(24px, 4vw, 64px);
 }
 .gridlines span {
   border-left: 1px solid var(--line);
@@ -97,7 +97,7 @@ button { background: none; border: none; cursor: pointer; color: inherit; font: 
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 22px clamp(20px, 4vw, 64px);
+  padding: 22px clamp(24px, 4vw, 64px);
   background: transparent;
   transition: background 0.4s var(--ease), backdrop-filter 0.4s;
 }
@@ -205,7 +205,7 @@ body.dark .theme-toggle .icon-sun { display: block; }
 .menu-sub a:hover { color: #f0efe9; }
 .menu-sub .n { font-family: var(--font-mono); font-size: 10px; margin-right: 8px; }
 .menu-close {
-  position: absolute; top: 24px; right: clamp(20px, 4vw, 64px);
+  position: absolute; top: 24px; right: clamp(24px, 4vw, 64px);
   width: 40px; height: 40px;
   display: flex; align-items: center; justify-content: center;
   z-index: 5;
@@ -221,7 +221,7 @@ body.dark .theme-toggle .icon-sun { display: block; }
 .wrap {
   position: relative;
   z-index: 2;
-  padding: 0 clamp(20px, 4vw, 64px);
+  padding: 0 clamp(24px, 4vw, 64px);
 }
 .section { padding: clamp(80px, 12vh, 160px) 0; }
 
@@ -250,7 +250,7 @@ body.dark .theme-toggle .icon-sun { display: block; }
 .hero-meta span { white-space: nowrap; }
 .hero-scrollhint {
   position: absolute;
-  bottom: 34px; left: clamp(20px, 4vw, 64px);
+  bottom: 34px; left: clamp(24px, 4vw, 64px);
   display: flex; align-items: center; gap: 10px;
 }
 .hero-scrollhint .bar {
@@ -428,7 +428,7 @@ body:has(.case-hero) .site-header:not(.scrolled) .theme-toggle svg { stroke: #f0
 .case-hero .inner {
   position: relative; z-index: 2;
   width: 100%;
-  padding: 0 clamp(20px, 4vw, 64px) clamp(44px, 7vh, 80px);
+  padding: 0 clamp(24px, 4vw, 64px) clamp(44px, 7vh, 80px);
 }
 .case-hero .mono { color: rgba(240,239,233,0.75); display: block; margin-bottom: 16px; }
 .case-hero h1 {
@@ -489,7 +489,7 @@ body:has(.case-hero) .site-header:not(.scrolled) .theme-toggle svg { stroke: #f0
   border-top: 1px solid var(--line-strong);
 }
 .case-nav a {
-  padding: clamp(40px, 7vh, 80px) clamp(20px, 4vw, 64px);
+  padding: clamp(40px, 7vh, 80px) clamp(24px, 4vw, 64px);
   transition: background 0.35s var(--ease), color 0.35s var(--ease);
 }
 .case-nav a:hover { background: var(--ink); color: var(--bg); }
@@ -580,7 +580,7 @@ body:has(.case-hero) .site-header:not(.scrolled) .theme-toggle svg { stroke: #f0
   position: relative;
   z-index: 2;
   border-top: 1px solid var(--line-strong);
-  padding: clamp(48px, 8vh, 90px) clamp(20px, 4vw, 64px) 34px;
+  padding: clamp(48px, 8vh, 90px) clamp(24px, 4vw, 64px) 34px;
 }
 .foot-grid {
   display: grid;
@@ -604,7 +604,7 @@ body:has(.case-hero) .site-header:not(.scrolled) .theme-toggle svg { stroke: #f0
 /* ---------- START A PROJECT 固定角标 ---------- */
 .start-project {
   position: fixed;
-  right: clamp(20px, 4vw, 64px);
+  right: clamp(24px, 4vw, 64px);
   bottom: 26px;
   z-index: 55;
   font-family: var(--font-mono);
@@ -654,4 +654,10 @@ body:has(.case-hero) .site-header:not(.scrolled) .theme-toggle svg { stroke: #f0
   .contact-cols { grid-template-columns: 1fr; }
   .header-center { display: none; }
   .hero-meta { gap: 14px; }
+}
+
+/* 修复：case-body 与 wrap 同用时水平留白被覆盖 */
+.case-body.wrap {
+  padding-left: clamp(24px, 4vw, 64px);
+  padding-right: clamp(24px, 4vw, 64px);
 }
