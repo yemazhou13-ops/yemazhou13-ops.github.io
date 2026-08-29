@@ -117,26 +117,71 @@
     });
   }
 
-  /* 菜单项沿弧线排布 */
+  /* 菜单项：弧线排布 + 滚轮旋转木马；圆形视窗图片同步旋转 */
+  var menuItems = overlay ? overlay.querySelectorAll(".menu-item") : [];
+  var circleImg = overlay ? overlay.querySelector(".menu-circle img") : null;
+  var ARC_START = -0.32, ARC_END = 0.34, ARC_SPAN = ARC_END - ARC_START;
+  var arcOff = 0, arcTarget = 0, imgRot = 0, rotTarget = 0;
+  var entranceDone = false, lastTouchY = null;
+
   function layoutMenu() {
     if (!overlay) return;
-    var items = overlay.querySelectorAll(".menu-item");
     var W = window.innerWidth, H = window.innerHeight;
-    // 弧线：圆心在左侧屏幕外，半径随视口自适应
-    var cx = -W * 0.35, cy = H * 0.52;
-    var r = W * 0.98;
-    var start = -0.32, end = 0.34;
-    items.forEach(function (item, i) {
-      var k = items.length === 1 ? 0.5 : i / (items.length - 1);
-      var ang = start + (end - start) * k;
+    var cx = -W * 0.35, cy = H * 0.52, r = W * 0.98;
+    menuItems.forEach(function (item, i) {
+      var k = menuItems.length === 1 ? 0.5 : i / (menuItems.length - 1);
+      var ang = ARC_START + ARC_SPAN * k - arcOff;
       var x = cx + r * Math.cos(ang);
       var y = cy + r * Math.sin(ang);
       item.style.left = Math.max(W * 0.08, Math.min(x, W * 0.86)) + "px";
       item.style.top = Math.max(H * 0.08, Math.min(y, H * 0.88)) + "px";
+      if (entranceDone && W > 900) {
+        var fade = Math.max(0, Math.min(1,
+          Math.min((ang - (ARC_START - 0.14)) / 0.14, ((ARC_END + 0.14) - ang) / 0.14)));
+        item.style.opacity = fade;
+        item.style.visibility = fade <= 0.01 ? "hidden" : "visible";
+      }
     });
   }
   layoutMenu();
   window.addEventListener("resize", layoutMenu);
+
+  function menuLoop() {
+    if (overlay && overlay.classList.contains("open")) {
+      arcOff += (arcTarget - arcOff) * 0.08;
+      imgRot += (rotTarget - imgRot) * 0.07;
+      if (circleImg) circleImg.style.transform = "scale(1.32) rotate(" + imgRot.toFixed(2) + "deg)";
+      layoutMenu();
+    }
+    requestAnimationFrame(menuLoop);
+  }
+  requestAnimationFrame(menuLoop);
+
+  function onMenuScroll(delta) {
+    rotTarget += delta * 0.12;
+    arcTarget = Math.max(0, Math.min(ARC_SPAN, arcTarget + delta * 0.0012));
+  }
+  if (overlay) {
+    overlay.addEventListener("wheel", function (e) {
+      e.preventDefault();
+      onMenuScroll(e.deltaY);
+    }, { passive: false });
+    overlay.addEventListener("touchmove", function (e) {
+      var y = e.touches[0].clientY;
+      if (lastTouchY !== null) onMenuScroll((lastTouchY - y) * 2.2);
+      lastTouchY = y;
+    }, { passive: true });
+    overlay.addEventListener("touchend", function () { lastTouchY = null; });
+  }
+  if (openBtn) openBtn.addEventListener("click", function () {
+    entranceDone = false;
+    arcTarget = 0; arcOff = 0; rotTarget = 0;
+    menuItems.forEach(function (item) {
+      item.style.opacity = ""; item.style.visibility = "";
+    });
+    setTimeout(function () { entranceDone = true; }, 1000);
+    openMenu();
+  });
 
   /* ---------- Hero 拖尾浮图：移动时在鼠标处生成、原地淡出 ---------- */
   var heroZone = document.querySelector("[data-cursor-preview]");

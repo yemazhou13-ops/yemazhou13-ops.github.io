@@ -824,3 +824,22 @@ body:has(.case-hero) .site-header:not(.scrolled) .theme-toggle svg { stroke: #f0
 }
 
 .contact-hero .ghost { color: var(--faint); }
+
+/* ═══════ 菜单圆形旋转视窗 ═══════ */
+.menu-circle {
+  position: absolute;
+  left: -16vmin; top: 50%;
+  width: 118vmin; height: 118vmin;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  overflow: hidden;
+  z-index: 0;
+}
+.menu-circle img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transform: scale(1.32) rotate(0deg);
+  will-change: transform;
+}
+.menu-overlay:not(.open) .menu-circle { opacity: 0; transition: opacity 0.4s; }
+.menu-items { z-index: 2; }
