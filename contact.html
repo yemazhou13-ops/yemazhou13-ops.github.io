@@ -49,20 +49,43 @@
 <main class="wrap">
   <section class="contact-hero">
     <span class="mono reveal in">CONTACT · 联系</span>
-    <h1 class="reveal in d1" style="margin-top:24px;">有项目想聊？<br><a href="mailto:yemazhou13@gmail.com">yemazhou13@gmail.com</a></h1>
-    <div class="contact-cols">
-      <div class="reveal d1">
-        <span class="mono">BASED · 坐标</span>
-        <p class="v">上海 SHANGHAI<br>可远程协作</p>
-      </div>
-      <div class="reveal d2">
-        <span class="mono">OPEN FOR · 合作方向</span>
-        <p class="v">AI 短片 / 宣传片创作<br>商业图像 · AIGC 人像<br>修图 · 调色 · 后期</p>
-      </div>
-      <div class="reveal d3">
-        <span class="mono">RESPONSE · 回复</span>
-        <p class="v">通常 24 小时内回复<br>附上需求与参考图会更快</p>
-      </div>
+    <h1 class="reveal in d1" style="margin-top:24px;">一起做点<span class="ghost">克制的</span>画面。</h1>
+    <p class="reveal in d2" style="margin-top:26px; font-size:15px; color:var(--muted); max-width:34em; line-height:1.9;">无论是一支 AI 短片、一组 AIGC 人像，还是一批要救回来的客片——说说你的想法，我会认真回复每一封邮件。</p>
+    <div class="inquiry reveal in d3">
+      <span class="mono">PROJECT INQUIRY · 项目咨询</span>
+      <form class="form-grid" id="inquiry-form">
+        <div class="form-field">
+          <label for="f-name">称呼 NAME +</label>
+          <input id="f-name" type="text" placeholder="怎么称呼你" required>
+        </div>
+        <div class="form-field">
+          <label for="f-mail">邮箱 EMAIL +</label>
+          <input id="f-mail" type="email" placeholder="you@company.com" required>
+        </div>
+        <div class="form-field">
+          <label for="f-type">项目类型 TYPE</label>
+          <select id="f-type">
+            <option>AI 短片 / 宣传片</option>
+            <option>AIGC 人像</option>
+            <option>修图 / 调色 / 后期</option>
+            <option>其他合作</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="f-budget">预算范围 BUDGET</label>
+          <select id="f-budget">
+            <option>聊聊看</option>
+            <option>5k 以内</option>
+            <option>5k — 20k</option>
+            <option>20k 以上</option>
+          </select>
+        </div>
+        <div class="form-field full">
+          <label for="f-detail">项目详情 DETAILS +</label>
+          <textarea id="f-detail" rows="4" placeholder="讲讲你的项目、目标和期望的样子……"></textarea>
+        </div>
+        <button class="form-submit" type="submit">发送 SEND →（唤起邮件客户端）</button>
+      </form>
     </div>
   </section>
 </main>
@@ -109,5 +132,13 @@
 </footer>
 
 <script src="js/main.js"></script>
+<script>
+document.getElementById('inquiry-form').addEventListener('submit', function (e) {
+  e.preventDefault();
+  var g = function (id) { return (document.getElementById(id).value || '').trim(); };
+  var body = '称呼：' + g('f-name') + '\n邮箱：' + g('f-mail') + '\n项目类型：' + g('f-type') + '\n预算范围：' + g('f-budget') + '\n\n项目详情：\n' + g('f-detail');
+  location.href = 'mailto:yemazhou13@gmail.com?subject=' + encodeURIComponent('项目咨询 — ' + g('f-name')) + '&body=' + encodeURIComponent(body);
+});
+</script>
 </body>
 </html>

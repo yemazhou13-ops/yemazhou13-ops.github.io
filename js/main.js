@@ -138,44 +138,71 @@
   layoutMenu();
   window.addEventListener("resize", layoutMenu);
 
-  /* ---------- 鼠标跟随作品预览图（Hero 区） ---------- */
-  var previewImgs = document.querySelectorAll(".cursor-img img");
-  var cursorBox = document.querySelector(".cursor-img");
-  if (cursorBox && previewImgs.length) {
-    var px = 0, py = 0, tx = 0, ty = 0;
-    var cur = 0, lastSwap = 0, idleTimer = null, active = false;
-    var heroZone = document.querySelector("[data-cursor-preview]");
+  /* ---------- Hero 拖尾浮图：移动时在鼠标处生成、原地淡出 ---------- */
+  var heroZone = document.querySelector("[data-cursor-preview]");
+  if (heroZone) {
+    var pool = [];
+    try { pool = JSON.parse(heroZone.getAttribute("data-trail")) || []; } catch (e) {}
+    if (!pool.length) pool = ["assets/lhz-01-cover.jpg"];
+    var lastSpawn = 0, poolIdx = 0, idleT = null, heroActive = false;
 
     window.addEventListener("mousemove", function (e) {
-      tx = e.clientX; ty = e.clientY;
-      if (!heroZone) return;
       var r = heroZone.getBoundingClientRect();
-      var inside = e.clientY >= r.top && e.clientY <= r.bottom && e.clientX >= r.left && e.clientX <= r.right;
-      if (inside && !active) {
-        active = true;
-        cursorBox.classList.add("show");
+      var inside = e.clientY >= r.top && e.clientY <= r.bottom;
+      if (inside && !heroActive) { heroActive = true; }
+      if (!heroActive) return;
+      if (Date.now() - lastSpawn > 200) {
+        lastSpawn = Date.now();
+        var el = document.createElement("div");
+        el.className = "trail-img " + (Math.random() > 0.5 ? "tl-l" : "tl-p");
+        el.style.setProperty("--tilt", (Math.random() * 14 - 7).toFixed(1) + "deg");
+        el.style.left = e.clientX + "px";
+        el.style.top = e.clientY + "px";
+        var im = document.createElement("img");
+        im.src = pool[poolIdx % pool.length];
+        poolIdx++;
+        el.appendChild(im);
+        document.body.appendChild(el);
+        setTimeout(function () { el.remove(); }, 1250);
       }
-      if (active) {
-        if (Date.now() - lastSwap > 650) {
-          lastSwap = Date.now();
-          previewImgs.forEach(function (im, i) { im.classList.toggle("current", i === cur); });
-          cur = (cur + 1) % previewImgs.length;
-        }
-        clearTimeout(idleTimer);
-        idleTimer = setTimeout(function () {
-          active = false;
-          cursorBox.classList.remove("show");
-        }, 1400);
-      }
+      clearTimeout(idleT);
+      idleT = setTimeout(function () { heroActive = false; }, 900);
+    }, { passive: true });
+  }
+
+  /* ---------- 项目索引行：悬停浮出预览图 ---------- */
+  var rows = document.querySelectorAll("[data-preview]");
+  if (rows.length) {
+    var box = document.createElement("div");
+    box.className = "row-preview";
+    box.innerHTML = '<img alt="">';
+    document.body.appendChild(box);
+    var boxImg = box.querySelector("img");
+    var bx = 0, by = 0, btx = 0, bty = 0, boxOn = false;
+
+    window.addEventListener("mousemove", function (e) {
+      btx = e.clientX; bty = e.clientY;
     }, { passive: true });
 
-    (function followLoop() {
-      px += (tx - px) * 0.09;
-      py += (ty - py) * 0.09;
-      cursorBox.style.left = px + "px";
-      cursorBox.style.top = py + "px";
-      requestAnimationFrame(followLoop);
+    (function boxLoop() {
+      bx += (btx - bx) * 0.14;
+      by += (bty - by) * 0.14;
+      if (boxOn) { box.style.left = bx + "px"; box.style.top = by + "px"; }
+      requestAnimationFrame(boxLoop);
     })();
+
+    rows.forEach(function (row) {
+      row.addEventListener("mouseenter", function () {
+        boxImg.src = row.getAttribute("data-preview");
+        bx = btx; by = bty;
+        box.classList.add("show");
+        boxOn = true;
+      });
+      row.addEventListener("mouseleave", function () {
+        box.classList.remove("show");
+        boxOn = false;
+      });
+    });
   }
 
   /* ---------- 滚动入场 ---------- */
