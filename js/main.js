@@ -158,7 +158,7 @@
   requestAnimationFrame(menuLoop);
 
   function onMenuScroll(delta) {
-    rotTarget += delta * 0.12;
+    rotTarget = Math.max(-28, Math.min(28, rotTarget + delta * 0.12));
     arcTarget = Math.max(0, Math.min(ARC_SPAN, arcTarget + delta * 0.0012));
   }
   if (overlay) {
