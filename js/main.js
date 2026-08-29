@@ -189,15 +189,20 @@
     var pool = [];
     try { pool = JSON.parse(heroZone.getAttribute("data-trail")) || []; } catch (e) {}
     if (!pool.length) pool = ["assets/lhz-01-cover.jpg"];
-    var lastSpawn = 0, poolIdx = 0, idleT = null, heroActive = false;
+    var lastSpawn = 0, poolIdx = 0, idleT = null, heroActive = false, alive = 0;
+    var MAX_ALIVE = 3, SPAWN_GAP = 340;
 
     window.addEventListener("mousemove", function (e) {
       var r = heroZone.getBoundingClientRect();
       var inside = e.clientY >= r.top && e.clientY <= r.bottom;
       if (inside && !heroActive) { heroActive = true; }
       if (!heroActive) return;
-      if (Date.now() - lastSpawn > 200) {
+      /* 顶部导航条与右下角按钮区不生成浮图，避免遮挡 MENU / 开始合作 */
+      var nearHeader = e.clientY < 100;
+      var nearCorner = e.clientY > window.innerHeight - 96 && e.clientX > window.innerWidth - 340;
+      if (Date.now() - lastSpawn > SPAWN_GAP && alive < MAX_ALIVE && !nearHeader && !nearCorner) {
         lastSpawn = Date.now();
+        alive++;
         var el = document.createElement("div");
         el.className = "trail-img " + (Math.random() > 0.5 ? "tl-l" : "tl-p");
         el.style.setProperty("--tilt", (Math.random() * 14 - 7).toFixed(1) + "deg");
@@ -208,7 +213,7 @@
         poolIdx++;
         el.appendChild(im);
         document.body.appendChild(el);
-        setTimeout(function () { el.remove(); }, 1250);
+        setTimeout(function () { el.remove(); alive--; }, 1250);
       }
       clearTimeout(idleT);
       idleT = setTimeout(function () { heroActive = false; }, 900);
